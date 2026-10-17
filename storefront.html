@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Storefront</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--brand:#173f35;--accent:#e8a317;--bg:#f5f8f6;--surface:#fff;--text:#18231f;--muted:#5d6b66;--line:#dde5e0;--on-brand:#fff;
+--display:'Bricolage Grotesque','Trebuchet MS',sans-serif;--body:'Figtree','Segoe UI',system-ui,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1815;--surface:#16231f;--text:#e8f0ec;--muted:#9bb0a8;--line:#263631}}
+:root[data-theme="dark"]{--bg:#0e1815;--surface:#16231f;--text:#e8f0ec;--muted:#9bb0a8;--line:#263631}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 var(--body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--brand);z-index:30}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--brand);color:var(--on-brand);display:flex;align-items:center;gap:12px;padding:10px 16px}
+.brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.logo{width:38px;height:38px;border-radius:10px;background:var(--accent);color:#1a1a1a;display:grid;place-items:center;font:700 20px var(--display);object-fit:cover;flex:none}
+.brand b{font:700 18px var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbtn{background:transparent;border:1px solid rgba(255,255,255,.4);color:inherit;border-radius:999px;padding:7px 14px;font-weight:600}
+.tbtn.cart{background:var(--accent);border-color:var(--accent);color:#1a1a1a}
+.hero{background:var(--brand);color:var(--on-brand);padding:28px 16px 36px}
+.wrap{max-width:1080px;margin:0 auto}
+.hero h1{font:700 clamp(30px,7vw,52px)/1.05 var(--display);margin:0 0 10px;max-width:14em;letter-spacing:-.02em}
+.hero p{margin:0 0 20px;max-width:34em;opacity:.88}
+.search{width:100%;max-width:460px;padding:13px 16px;border-radius:12px;border:0;background:#fff;color:#18231f}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:16px 0 6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 16px;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;padding:10px 0 30px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0}
+.card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--line)}
+.card .in{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card h3{margin:0;font:600 15px/1.25 var(--body)}
+.price{font-weight:600}.price s{color:var(--muted);font-weight:400;margin-left:6px;font-size:.9em}
+.add{margin-top:auto;border:1px solid var(--brand);background:transparent;color:var(--brand);border-radius:10px;padding:7px;font-weight:600}
+@media (prefers-color-scheme:dark){.add{color:var(--accent);border-color:var(--accent)}}
+.empty{grid-column:1/-1;color:var(--muted);padding:30px 0}
+footer{background:var(--surface);border-top:1px solid var(--line);padding:24px 16px 32px;color:var(--muted)}
+footer b{color:var(--text)}footer a{color:inherit}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:40;display:none}
+.scrim.on{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);z-index:50;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer.on{transform:none}
+.dh{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.dh h2{margin:0;font:700 20px var(--display)}
+.db{flex:1;overflow-y:auto;padding:14px 16px}
+.x{border:0;background:var(--bg);width:36px;height:36px;border-radius:50%;font-size:18px}
+.line{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.line img{width:56px;height:56px;border-radius:10px;object-fit:cover}
+.line div{flex:1;min-width:0}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--bg)}
+.row{display:flex;justify-content:space-between;margin:6px 0}
+.rmline{border:0;background:none;color:#d9534f;padding:2px 0;font-size:14px;text-decoration:underline}
+.pwr{min-height:24px;margin:14px 0 0;font-size:13px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.row.t{font-weight:700;font-size:1.1em;border-top:1px solid var(--line);padding-top:10px}
+.field{display:block;margin:10px 0 0;font-size:14px;color:var(--muted)}
+.field input,.field textarea,.field select{display:block;width:100%;margin-top:4px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
+.field input[type=color]{padding:2px;height:42px}
+.go{width:100%;margin-top:14px;border:0;background:var(--brand);color:var(--on-brand);border-radius:12px;padding:13px;font-weight:600}
+.ghost{width:100%;margin-top:8px;border:1px solid var(--line);background:transparent;border-radius:12px;padding:10px}
+.modal{position:fixed;inset:auto 0 0 0;z-index:50;background:var(--surface);border-radius:20px 20px 0 0;max-height:90%;overflow-y:auto;transform:translateY(105%);transition:transform .25s;padding-bottom:env(safe-area-inset-bottom,0px);max-width:640px;margin:0 auto}
+.modal.on{transform:none}
+.modal img{width:100%;max-height:340px;object-fit:cover;display:block}
+.modal .in{padding:16px}
+.modal h2{margin:0 0 4px;font:700 24px var(--display)}
+.tag{color:var(--muted);font-size:14px}
+details{border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0;background:var(--bg)}
+summary{cursor:pointer;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.sec{font:700 16px var(--display);margin:22px 0 4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rm{border:1px solid #c0392b;color:#c0392b;background:transparent;border-radius:10px;padding:8px;margin-top:10px;width:100%}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#18231f;color:#fff;padding:10px 16px;border-radius:999px;z-index:60;display:none}
+@media (prefers-reduced-motion:reduce){.drawer,.modal{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span id="logo"></span><b id="sname"></b></div>
+  
+  <button class="tbtn cart" id="cartBtn">Cart (0)</button>
+</header>
+<section class="hero"><div class="wrap">
+  <h1 id="htitle"></h1><p id="htag"></p>
+  <input class="search" id="q" type="search" placeholder="Search products" aria-label="Search products">
+</div></section>
+<main class="wrap">
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid"></div>
+</main>
+<footer><div class="wrap" id="foot"></div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="modal" id="modal" aria-label="Product details"></aside>
+<aside class="drawer" id="cart" aria-label="Cart"></aside>
+<aside class="drawer" id="designer" aria-label="Store designer"></aside>
+<aside class="modal" id="lock" aria-label="Designer access"></aside>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DEF={name:'Hearth & Home',tagline:'Décor, spiritual essentials and gifts for every occasion.',heroTitle:'Beautiful finds for every occasion.',logo:'',brand:'#173f35',accent:'#e8a317',currency:'₹',whatsapp:'919999999999',email:'hello@example.com',phone:'+91 99999 99999',address:'12 Market Road, Your City, India',hours:'Mon–Sat, 10am–7pm',poweredBy:'Powered by Your Studio Name',pwHash:'6aa5a287cc26987d1b5e383141e9eb03813019293c15f83cc212ce19df1ccffb',freeAbove:999,shipFee:60,
+products:[
+{id:1,name:'Brass diya set of 4',price:349,mrp:449,cat:'Spiritual',desc:'Hand-finished brass lamps for festivals and daily prayer.',img:''},
+{id:2,name:'Handwoven jute runner',price:599,mrp:0,cat:'Décor',desc:'A 150 cm table runner in natural jute with a fringed edge.',img:''},
+{id:3,name:'Sandalwood incense box',price:249,mrp:0,cat:'Spiritual',desc:'Six slow-burning bundles in a wooden keepsake box.',img:''},
+{id:4,name:'Ceramic tea-light holder',price:429,mrp:0,cat:'Décor',desc:'Glazed stoneware that throws a warm pattern of light.',img:''},
+{id:5,name:'Festival gift hamper',price:1299,mrp:1499,cat:'Gifts',desc:'Sweets, a diya pair and a scented candle, gift-wrapped.',img:''},
+{id:6,name:'Brass pooja bell',price:799,mrp:0,cat:'Spiritual',desc:'A clear, long-ringing bell with a carved handle.',img:''},
+{id:7,name:'Macramé wall hanging',price:899,mrp:0,cat:'Décor',desc:'Knotted cotton cord on a driftwood rod.',img:''},
+{id:8,name:'Scented candle trio',price:549,mrp:0,cat:'Gifts',desc:'Jasmine, cedar and rose in reusable glass jars.',img:''}]};
+let cfg,cat='All',query='',cart={};
+let EDIT=false;
+function load(){if(EDIT){try{const s=localStorage.getItem('storecfg');if(s)return {...DEF,...JSON.parse(s)}}catch(e){}}return JSON.parse(JSON.stringify(DEF))}
+function save(){try{localStorage.setItem('storecfg',JSON.stringify(cfg))}catch(e){toast('Saved for this session only. Use smaller images to keep changes.')}}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2600)}
+const money=n=>cfg.currency+Number(n||0).toLocaleString('en-IN');
+function ph(p){let h=0;for(const c of p.name)h=(h*31+c.charCodeAt(0))%360;const l=(p.name.trim()[0]||'?').toUpperCase();
+const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="hsl(${h},35%,82%)"/><circle cx="200" cy="200" r="110" fill="hsl(${h},40%,68%)"/><text x="200" y="240" font-size="120" text-anchor="middle" font-family="Georgia,serif" fill="hsl(${h},45%,25%)">${esc(l)}</text></svg>`;
+return 'data:image/svg+xml,'+encodeURIComponent(svg)}
+function fix(u){u=(u||'').trim();const m=u.match(/drive\.google\.com\/file\/d\/([\w-]+)/)||u.match(/drive\.google\.com\/(?:open|uc)\?[^#]*id=([\w-]+)/);return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w800`:u}
+const img=p=>fix(p.img)||ph(p);
+function readImg(file,max,type,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL(type,.82))};im.src=r.result};r.readAsDataURL(file)}
+
+function renderStore(){
+  const r=document.documentElement.style;r.setProperty('--brand',cfg.brand);r.setProperty('--accent',cfg.accent);
+  document.title=cfg.name;
+  $('#logo').innerHTML=cfg.logo?`<img class="logo" src="${esc(cfg.logo)}" alt="">`:`<span class="logo">${esc((cfg.name.trim()[0]||'S').toUpperCase())}</span>`;
+  $('#sname').textContent=cfg.name;$('#htitle').textContent=cfg.heroTitle;$('#htag').textContent=cfg.tagline;
+  const cats=['All',...new Set(cfg.products.map(p=>p.cat).filter(Boolean))];
+  if(!cats.includes(cat))cat='All';
+  $('#chips').innerHTML=cats.map(c=>`<button class="chip" aria-pressed="${c===cat}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+  const list=cfg.products.filter(p=>(cat==='All'||p.cat===cat)&&(p.name+' '+p.id).toLowerCase().includes(query));
+  $('#grid').innerHTML=list.length?list.map(p=>`<article class="card"><button class="card" style="border:0;border-radius:0" data-open="${p.id}" aria-label="View ${esc(p.name)}"><img src="${esc(img(p))}" alt="" loading="lazy"><span class="in"><h3>${esc(p.name)}</h3><span class="price">${money(p.price)}${p.mrp>p.price?`<s>${money(p.mrp)}</s>`:''}</span></span></button><div style="padding:0 12px 12px"><button class="add" style="width:100%" data-add="${p.id}">Add to cart</button></div></article>`).join(''):`<p class="empty">No products match. Try another search or category.</p>`;
+  $('#foot').innerHTML=`<p><b>${esc(cfg.name)}</b><br>${esc(cfg.address)}<br>${esc(cfg.hours)}</p><p>Call <a href="tel:${esc(cfg.phone.replace(/\s/g,''))}">${esc(cfg.phone)}</a> · <a href="mailto:${esc(cfg.email)}">${esc(cfg.email)}</a> · <a href="https://wa.me/${cfg.whatsapp.replace(/\D/g,'')}">WhatsApp us</a></p><p class="pwr" id="pw">${esc(cfg.poweredBy)}</p>`;
+  count();
+}
+function count(){const n=Object.values(cart).reduce((a,b)=>a+b,0);$('#cartBtn').textContent=`Cart (${n})`}
+function show(id,on){$(id).classList.toggle('on',on);const any=document.querySelector('.drawer.on,.modal.on');$('#scrim').classList.toggle('on',!!any)}
+function closeAll(){document.querySelectorAll('.drawer,.modal').forEach(e=>e.classList.remove('on'));$('#scrim').classList.remove('on')}
+function openProduct(id){const p=cfg.products.find(x=>x.id==id);if(!p)return;
+  $('#modal').innerHTML=`<img src="${esc(img(p))}" alt="${esc(p.name)}"><div class="in"><h2>${esc(p.name)}</h2><div class="tag">${esc(p.cat)}</div><p>${esc(p.desc)}</p><p class="price" style="font-size:1.2em">${money(p.price)}${p.mrp>p.price?`<s>${money(p.mrp)}</s>`:''}</p><button class="go" data-add="${p.id}" data-close="1">Add to cart</button><button class="ghost" data-close="1">Keep browsing</button></div>`;
+  show('#modal',true)}
+function addCart(id){cart[id]=(cart[id]||0)+1;count();toast('Added to cart')}
+function totals(){const sub=Object.entries(cart).reduce((a,[id,q])=>{const p=cfg.products.find(x=>x.id==id);return a+(p?p.price*q:0)},0);const ship=sub===0||sub>=cfg.freeAbove?0:cfg.shipFee;return{sub,ship,total:sub+ship}}
+function renderCart(){
+  Object.keys(cart).forEach(id=>{if(!cfg.products.find(p=>p.id==id))delete cart[id]});
+  const items=Object.entries(cart).map(([id,q])=>({p:cfg.products.find(x=>x.id==id),q}));const t=totals();
+  const keep=['cn','cp','ca'].reduce((o,k)=>{const e=$('#'+k);o[k]=e?e.value:'';return o},{});
+  $('#cart').innerHTML=`<div class="dh"><h2>Your cart</h2><button class="x" data-close="1" aria-label="Close cart">✕</button></div><div class="db">${items.length?items.map(({p,q})=>`<div class="line"><img src="${esc(img(p))}" alt=""><div><b>${esc(p.name)}</b><div class="tag">${money(p.price)}</div><button class="rmline" data-rm="${p.id}">Remove</button></div><div class="qty"><button data-dec="${p.id}" aria-label="Remove one">−</button>${q}<button data-add="${p.id}" data-keep="1" aria-label="Add one">+</button></div></div>`).join('')+`<div class="row"><span>Items</span><span>${money(t.sub)}</span></div><div class="row"><span>Delivery</span><span>${t.ship?money(t.ship):'Free'}</span></div>${t.sub<cfg.freeAbove?`<div class="tag">Add ${money(cfg.freeAbove-t.sub)} more for free delivery.</div>`:''}<div class="row t"><span>To pay</span><span>${money(t.total)}</span></div><label class="field">Full name<input id="cn" value="${esc(keep.cn)}" autocomplete="name"></label><label class="field">Mobile number<input id="cp" value="${esc(keep.cp)}" inputmode="tel" autocomplete="tel"></label><label class="field">Delivery address<textarea id="ca" rows="3" autocomplete="street-address">${esc(keep.ca)}</textarea></label><button class="go" id="order">Send order on WhatsApp</button>`:`<p class="empty">Your cart is empty. Add a product to begin.</p>`}</div>`;
+}
+function order(){const n=$('#cn').value.trim(),p=$('#cp').value.trim(),a=$('#ca').value.trim();
+  if(!n||!p||!a){toast('Enter your name, mobile number and address.');return}
+  const t=totals();const lines=Object.entries(cart).map(([id,q])=>{const x=cfg.products.find(y=>y.id==id);return `${q} x ${x.name} (${money(x.price*q)})`});
+  const msg=`New order for ${cfg.name}\n${lines.join('\n')}\nDelivery: ${t.ship?money(t.ship):'Free'}\nTotal: ${money(t.total)}\n\nName: ${n}\nMobile: ${p}\nAddress: ${a}`;
+  window.open(`https://wa.me/${cfg.whatsapp.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank','noopener')}
+
+const F=(k,l,t='text')=>`<label class="field">${l}<input data-k="${k}" type="${t}" value="${esc(cfg[k])}"></label>`;
+const sel=new Set();
+function updateBulk(){const b=$('#bulkDel');if(!b)return;delete b.dataset.armed;b.disabled=!sel.size;b.textContent=`Remove selected (${sel.size})`;$('#selAll').textContent=sel.size&&sel.size===cfg.products.length?'Clear selection':'Select all'}
+function renderDesigner(openId){sel.clear();
+  $('#designer').innerHTML=`<div class="dh"><h2>Edit store</h2><button class="x" data-close="1" aria-label="Close editor">✕</button></div><div class="db">
+  <p class="tag" style="margin-top:0">Changes appear instantly and save in this browser.</p>
+  <div class="sec">Brand</div>${F('name','Store name')}${F('heroTitle','Headline')}${F('tagline','Subheading')}
+  <label class="field">Logo (square image works best)<input type="file" accept="image/*" id="logoFile"></label>${cfg.logo?'<button class="ghost" id="logoClear">Remove logo</button>':''}
+  <div class="two">${F('brand','Main colour','color')}${F('accent','Accent colour','color')}</div>
+  <div class="sec">Contact details</div>${F('phone','Phone')}${F('whatsapp','WhatsApp number (with country code)')}${F('email','Email','email')}${F('address','Address')}${F('hours','Opening hours')}<div class="sec">Footer</div>${F('poweredBy','Footer credit text')}
+  <div class="sec">Pricing and delivery</div><div class="two">${F('currency','Currency symbol')}${F('freeAbove','Free delivery above','number')}</div>${F('shipFee','Delivery fee','number')}
+  <div class="sec">Products (${cfg.products.length})</div><div class="two"><button class="ghost" id="selAll" style="margin:0">Select all</button><button class="rm" id="bulkDel" style="margin:0" disabled>Remove selected (0)</button></div><p class="tag" style="margin:6px 0 0">Tick the boxes to choose several products at once.</p>
+  ${cfg.products.map(p=>`<details data-p="${p.id}" ${p.id==openId?'open':''}><summary><input type="checkbox" data-sel="${p.id}" aria-label="Select ${esc(p.name)}" style="width:20px;height:20px;flex:none"><span style="flex:1">${esc(p.name)||'New product'}</span><span>${money(p.price)}</span></summary>
+   <label class="field">Name<input data-pk="name" value="${esc(p.name)}"></label>
+   <div class="two"><label class="field">Price<input data-pk="price" type="number" value="${p.price}"></label><label class="field">Old price (optional)<input data-pk="mrp" type="number" value="${p.mrp||''}"></label></div>
+   <label class="field">Category<input data-pk="cat" value="${esc(p.cat)}"></label>
+   <label class="field">Description<textarea data-pk="desc" rows="3">${esc(p.desc)}</textarea></label>
+   <label class="field">Photo link (Google Drive or any image link)<input data-pk="img" value="${p.img&&!p.img.startsWith('data:')?esc(p.img):''}" placeholder="Paste link"></label>
+   <label class="field">Or upload a photo<input type="file" accept="image/*" data-pfile></label>
+   <button class="rm" data-del="${p.id}">Remove product</button></details>`).join('')}
+  <button class="go" id="addP">Add product</button>
+  <div class="sec">Backup and sharing</div>
+  <button class="ghost" id="exp">Show settings as text</button><textarea id="io" rows="5" style="width:100%;margin-top:8px;display:none" placeholder="Paste settings here"></textarea><button class="ghost" id="imp" style="display:none">Apply pasted settings</button>
+  <div class="sec">Editor password</div><p class="tag" style="margin:0">Type a new password to get a code. Paste the code into pwHash in your index.html on GitHub.</p><label class="field">New password<input id="newpw" type="password"></label><button class="ghost" id="mkpw">Create password code</button><textarea id="pwout" rows="3" readonly style="width:100%;margin-top:8px;display:none"></textarea><button class="ghost" id="reset" style="color:#c0392b">Reset to sample store</button></div>`;
+}
+
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t){if(e.target.id==='scrim')closeAll();return}
+  const d=t.dataset;
+  if(d.open)openProduct(d.open);
+  else if(d.add){addCart(d.add);if(d.close)closeAll();if(d.keep)renderCart()}
+  else if(d.rm){delete cart[d.rm];count();renderCart();toast('Removed from cart')}else if(d.dec){cart[d.dec]=(cart[d.dec]||1)-1;if(cart[d.dec]<=0)delete cart[d.dec];count();renderCart()}
+  else if(d.cat){cat=d.cat;renderStore()}
+  else if(d.close)closeAll();
+  else if(d.del){if(t.dataset.armed){cfg.products=cfg.products.filter(p=>p.id!=d.del);delete cart[d.del];save();renderStore();renderDesigner();count();toast('Product removed')}else{t.dataset.armed='1';t.textContent='Tap again to confirm removal';setTimeout(()=>{if(t.isConnected){delete t.dataset.armed;t.textContent='Remove product'}},3000)}}
+  else if(t.id==='cartBtn'){renderCart();show('#cart',true)}
+  else if(t.id==='selAll'){const all=sel.size>0&&sel.size===cfg.products.length;sel.clear();if(!all)cfg.products.forEach(p=>sel.add(String(p.id)));document.querySelectorAll('[data-sel]').forEach(c=>c.checked=sel.has(c.dataset.sel));updateBulk()}
+  else if(t.id==='bulkDel'){if(t.dataset.armed){const n=sel.size;cfg.products=cfg.products.filter(p=>!sel.has(String(p.id)));sel.forEach(id=>delete cart[id]);save();renderStore();renderDesigner();count();toast(n+' products removed')}else{t.dataset.armed='1';t.textContent='Tap again to remove '+sel.size;setTimeout(()=>{if(t.isConnected)updateBulk()},3000)}}
+  else if(t.id==='unlock')tryUnlock();
+  else if(t.id==='mkpw')mkpw();
+  else if(t.id==='order')order();
+  else if(t.id==='addP'){const id=Date.now();cfg.products.push({id,name:'',price:0,mrp:0,cat:cat==='All'?'Gifts':cat,desc:'',img:''});save();renderStore();renderDesigner(id)}
+  else if(t.id==='logoClear'){cfg.logo='';save();renderStore();renderDesigner()}
+  else if(t.id==='exp'){const io=$('#io');io.style.display='block';$('#imp').style.display='block';io.value=JSON.stringify(cfg,(k,v)=>k==='img'||k==='logo'?(v?'(image)':''):v,1);io.select()}
+  else if(t.id==='imp'){try{const o=JSON.parse($('#io').value);cfg={...cfg,...o};cfg.products=(o.products||cfg.products).map(p=>({...p,img:p.img==='(image)'?'':p.img}));if(cfg.logo==='(image)')cfg.logo='';save();renderStore();renderDesigner();toast('Settings applied')}catch(x){toast('Those settings could not be read.')}}
+  else if(t.id==='reset'){if(t.dataset.armed){cfg=JSON.parse(JSON.stringify(DEF));cart={};save();renderStore();renderDesigner();count();toast('Store reset')}else{t.dataset.armed='1';t.textContent='Tap again to confirm reset';setTimeout(()=>{if(t.isConnected){delete t.dataset.armed;t.textContent='Reset to sample store'}},3000)}}
+});
+document.addEventListener('input',e=>{const el=e.target;
+  if(el.id==='q'){query=el.value.toLowerCase();renderStore();return}
+  if(el.dataset.k){const k=el.dataset.k;cfg[k]=el.type==='number'?Number(el.value)||0:el.value;save();renderStore()}
+  else if(el.dataset.pk){const p=cfg.products.find(x=>x.id==el.closest('details').dataset.p);const k=el.dataset.pk;p[k]=(k==='price'||k==='mrp')?Number(el.value)||0:el.value;save();renderStore();
+    const sp=el.closest('details').querySelectorAll('summary span');sp[0].textContent=p.name||'New product';sp[1].textContent=money(p.price)}
+});
+document.addEventListener('change',e=>{const el=e.target,f=el.files&&el.files[0];if(!f)return;
+  if(el.id==='logoFile')readImg(f,160,'image/png',d=>{cfg.logo=d;save();renderStore();renderDesigner()});
+  else if(el.hasAttribute('data-pfile')){const id=el.closest('details').dataset.p;readImg(f,600,'image/jpeg',d=>{cfg.products.find(x=>x.id==id).img=d;save();renderStore();toast('Photo updated')})}
+});
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function openLock(){$('#lock').innerHTML=`<div class="in"><h2>Designer access</h2><label class="field">Password<input id="lpw" type="password" autocomplete="current-password"></label><p class="tag" id="lerr" style="color:#d9534f"></p><button class="go" id="unlock">Unlock editor</button><button class="ghost" data-close="1">Cancel</button></div>`;show('#lock',true);setTimeout(()=>$('#lpw').focus(),300)}
+async function tryUnlock(){const v=$('#lpw').value;try{const h=await sha(v);if(h===DEF.pwHash){closeAll();EDIT=true;cfg=load();renderStore();renderDesigner();show('#designer',true)}else{$('#lerr').textContent='Wrong password. Try again.';$('#lpw').value=''}}catch(x){$('#lerr').textContent='Unlock needs a secure (https) address.'}}
+async function mkpw(){const v=$('#newpw').value;if(v.length<6){toast('Use at least 6 characters.');return}$('#pwout').style.display='block';$('#pwout').value=await sha(v)}
+let holdT;
+document.addEventListener('pointerdown',e=>{if(e.target.closest('#pw')){clearTimeout(holdT);holdT=setTimeout(openLock,5000)}});
+['pointerup','pointercancel'].forEach(n=>document.addEventListener(n,()=>clearTimeout(holdT)));
+document.addEventListener('contextmenu',e=>{if(e.target.closest('#pw'))e.preventDefault()});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='lpw')tryUnlock()});
+document.addEventListener('change',e=>{const el=e.target;if(el.dataset&&el.dataset.sel){el.checked?sel.add(el.dataset.sel):sel.delete(el.dataset.sel);updateBulk()}});
+cfg=load();renderStore();
+</script>
+</body>
+</html>
